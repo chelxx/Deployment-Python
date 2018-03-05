@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>FRIENDS HOME</title>
+</head>
+<body>
+    <h1>Hello, {{ user.first }}!</h1>
+    <form action="/logout" method="post">
+        {% csrf_token %}
+        <button>LOG OUT</button>
+    </form>
+<!-- BELT EXAM STUFF STARTS HERE -->
+<!-- MY FRIENDS -->
+    {% if my_friends %}
+        <h2>Here is the list of your friends:</h2>
+        <table cellspacing="10">
+            <tr>
+                <th>Alias</th>
+                <th>Action</th>
+            </tr>
+    {% else %}
+        <h2><font color="green">You don't have any friends yet. Add some!</font></h2>
+    {% endif %}
+        {% for my_friends in my_friends %}
+            <tr>
+                <td>{{ my_friends.alias }}</td>
+                <td><a href="/profile/{{ my_friends.id }}">View Profile</a>&#8729;<a href="/unfriend/{{ my_friends.id }}">Unfriend!</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+<!-- NOT FRIENDS -->
+    <h2>Other users not on your friends list:</h2>
+    <table cellspacing="10">
+        <tr>
+            <th>Alias</th>
+            <th>Action</th>
+        </tr>
+    {% for all_users in all_users %}
+        {% if not user.id == all_users.id %}
+            {% if not all_users in my_friends %}
+                <tr>
+                    <td><a href="/profile/{{ all_users.id }}">{{ all_users.alias }}</a></td>
+                    <td><a href="/friend/{{ all_users.id }}">Add as Friend!</a></td>
+                </tr>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    </table>
+<!-- BELT EXAM STUFF ENDS HERE -->
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}><font color="red">{{ message }}</font></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>
